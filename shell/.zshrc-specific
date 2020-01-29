@@ -1,1 +1,4 @@
 plugins=(vscode git colorize golang docker docker-compose)
+export GOROOT=/go
+export GOPATH=/go
+export PATH=$GOPATH/bin:$PATH

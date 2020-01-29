@@ -42,10 +42,9 @@ RUN git clone https://go.googlesource.com/go goroot
 WORKDIR /opt/go/goroot 
 RUN git checkout $GO_VERSION
 WORKDIR /opt/go/goroot/src
-
 RUN /opt/go/goroot/src/all.bash
 
-RUN cp -r /opt/go/goroot/bin/go /usr/local/go
+RUN mkdir -p /go/bin && cp -R /opt/go/goroot/bin /go/
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 WORKDIR $GOPATH
@@ -57,10 +56,10 @@ COPY --chown=${USER_UID}:${USER_GID} shell/.zshrc-specific shell/.welcome.sh /ho
 COPY shell/.zshrc-specific shell/.welcome.sh /root/
 # Install Go packages
 RUN wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /bin -d v1.22.2
-ENV GO111MODULE=on
-RUN go get -v golang.org/x/tools/gopls && \
-    chown ${USERNAME}:${USER_GID} /go/bin/* && \
-    chmod 500 /go/bin/* && \
-    rm -rf /go/pkg /go/src/* /root/.cache/go-build
+RUN go get -v golang.org/x/tools/gopls 
+RUN go get github.com/golangci/golangci-lint/cmd/golangci-lint 
+#    chown ${USERNAME}:${USER_GID} /go/bin/* && \
+#    chmod 500 /go/bin/* && \
+#    rm -rf /go/pkg /go/src/* /root/.cache/go-build
 
 USER ${USERNAME}
